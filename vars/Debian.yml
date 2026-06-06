@@ -1,0 +1,25 @@
+---
+# Debian swap sizing (Debian wiki guidance)
+# When hibernation needed: swap ≥ RAM
+# Otherwise:
+#   RAM < 2  GB → swap = 2 × RAM
+#   RAM 2–8 GB → swap = RAM
+#   RAM > 8 GB → 4 GB minimum
+swap_debian_table:
+  - min_ram_mb: 0
+    max_ram_mb: 2048
+    multiplier: 2
+    min_swap_mb: 0
+    max_swap_mb: 4096
+  - min_ram_mb: 2048
+    max_ram_mb: 8192
+    multiplier: 1
+    min_swap_mb: 2048
+    max_swap_mb: 8192
+  - min_ram_mb: 8192
+    max_ram_mb: -1
+    multiplier: 0
+    min_swap_mb: 4096
+    max_swap_mb: 4096
+
+swap_debian_default_swappiness: 60

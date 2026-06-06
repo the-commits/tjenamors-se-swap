@@ -1,0 +1,25 @@
+---
+- name: Verify
+  hosts: all
+  become: true
+  gather_facts: true
+  tasks:
+    - name: Check swap file exists
+      ansible.builtin.stat:
+        path: /swapfile
+      register: sf
+    - name: Assert swap file present
+      ansible.builtin.assert:
+        that:
+          - sf.stat.exists
+          - sf.stat.mode == '0600'
+        msg: "Swap file missing or wrong permissions"
+    - name: Check swap is active
+      ansible.builtin.command:
+        cmd: swapon --show
+      register: swap_show
+      changed_when: false
+    - name: Assert swap is active
+      ansible.builtin.assert:
+        that: "'/swapfile' in swap_show.stdout"
+        msg: "Swap file not activated"

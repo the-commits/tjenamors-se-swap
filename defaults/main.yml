@@ -1,0 +1,9 @@
+---
+swap_enabled: true
+swap_file_path: /swapfile
+swap_swappiness: 60
+swap_file_size: 0
+
+# Set to 'auto' to use distro best-practice sizing.
+# Set to a number (in MB) to force a specific size.
+swap_size_mode: auto

@@ -1,0 +1,89 @@
+---
+- name: Include OS-specific variables
+  ansible.builtin.include_vars: "{{ lookup('first_found', ansible_os_family | lower ~ '.yml', 'default.yml', errors=['ignore']) }}"
+  when: swap_size_mode == 'auto'
+
+- name: Calculate swap size from distro table
+  ansible.builtin.set_fact:
+    _swap_table: "{{ lookup('vars', 'swap_' + (ansible_os_family | lower) + '_table', default=[]) }}"
+  when: swap_size_mode == 'auto'
+
+- name: Look up matching row from distro swap table
+  ansible.builtin.set_fact:
+    _swap_row: "{{ _swap_table | selectattr('min_ram_mb', '<=', ansible_memtotal_mb | int) | selectattr('max_ram_mb', '>=', ansible_memtotal_mb | int) | first | default({}) }}"
+  when: swap_size_mode == 'auto' and _swap_table | length > 0
+
+- name: Compute auto swap size (MB)
+  ansible.builtin.set_fact:
+    swap_file_size: "{{ (_swap_row.multiplier | float * (ansible_memtotal_mb | int)) | max(_swap_row.min_swap_mb) | min(_swap_row.max_swap_mb) | int if _swap_row.multiplier > 0 else _swap_row.min_swap_mb }}"
+  when:
+    - swap_size_mode == 'auto'
+    - _swap_row | length > 0
+
+- name: Fail if swap_size_mode is auto but no distro table matched
+  ansible.builtin.fail:
+    msg: "No swap sizing table for OS family '{{ ansible_os_family }}' and swap_size_mode is 'auto'. Set swap_size_mode to a size in MB."
+  when: swap_size_mode == 'auto' and (_swap_table | length == 0 or _swap_row | length == 0)
+
+- name: Write swap file
+  ansible.builtin.command:
+    cmd: "dd if=/dev/zero of={{ swap_file_path }} bs=1M count={{ swap_file_size }} status=progress"
+    creates: "{{ swap_file_path }}"
+  register: dd_result
+  when: swap_enabled
+  notify: activate swap
+
+- name: Set swap file permissions
+  ansible.builtin.file:
+    path: "{{ swap_file_path }}"
+    owner: root
+    group: root
+    mode: "0600"
+  when: swap_enabled and dd_result is changed
+
+- name: Format as swap
+  ansible.builtin.command:
+    cmd: "mkswap {{ swap_file_path }}"
+  when: swap_enabled and dd_result is changed
+
+- name: Activate swap
+  ansible.builtin.command:
+    cmd: "swapon {{ swap_file_path }}"
+  when: swap_enabled and dd_result is changed
+
+- name: Configure swappiness
+  ansible.builtin.sysctl:
+    name: vm.swappiness
+    value: "{{ swap_swappiness }}"
+    state: present
+    reload: true
+  when: swap_enabled
+
+- name: Add swap to fstab
+  ansible.builtin.mount:
+    path: none
+    src: "{{ swap_file_path }}"
+    fstype: swap
+    opts: sw
+    passno: 0
+    dump: 0
+    state: present
+  when: swap_enabled
+
+- name: Disable swap (all swap files)
+  ansible.builtin.command:
+    cmd: swapoff --all
+  when: not swap_enabled
+
+- name: Remove swap entry from fstab
+  ansible.builtin.replace:
+    path: /etc/fstab
+    regexp: '\s*{{ swap_file_path | regex_escape }}\s+none\s+swap\s+.*'
+    replace: ''
+  when: not swap_enabled
+
+- name: Remove swap file
+  ansible.builtin.file:
+    path: "{{ swap_file_path }}"
+    state: absent
+  when: not swap_enabled

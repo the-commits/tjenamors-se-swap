@@ -1,0 +1,10 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+  gather_facts: true
+  vars:
+    swap_size_mode: auto
+    swap_swappiness: 10
+  roles:
+    - role: swap

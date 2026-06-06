@@ -1,0 +1,17 @@
+namespace: tjenamors
+name: swap
+version: 0.0.1
+readme: README.md
+authors:
+  - the-commits
+description: Manage swap file with distro-specific best-practice sizing (RHEL, Ubuntu, Debian).
+license:
+  - AGPL-3.0
+tags:
+  - swap
+  - memory
+  - performance
+  - system
+dependencies: {}
+repository: https://git.sr.ht/~the-commits/tjenamors-se-swap
+issues: https://git.sr.ht/~the-commits/tjenamors-se-swap
