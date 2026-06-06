@@ -1,11 +1,17 @@
 ---
 - name: Include OS-specific variables
-  ansible.builtin.include_vars: "{{ lookup('first_found', ansible_os_family | lower ~ '.yml', 'default.yml', errors=['ignore']) }}"
+  ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
+  vars:
+    params:
+      files:
+        - "{{ ansible_distribution }}.yml"
+        - "{{ ansible_os_family }}.yml"
+      skip: true
   when: swap_size_mode == 'auto'
 
 - name: Calculate swap size from distro table
   ansible.builtin.set_fact:
-    _swap_table: "{{ lookup('vars', 'swap_' + (ansible_os_family | lower) + '_table', default=[]) }}"
+    _swap_table: "{{ lookup('vars', 'swap_' + (ansible_distribution | lower) + '_table', default=[]) }}"
   when: swap_size_mode == 'auto'
 
 - name: Look up matching row from distro swap table
