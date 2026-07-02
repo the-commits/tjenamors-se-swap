@@ -1,5 +1,5 @@
-[![sourcehut](https://img.shields.io/badge/sourcehut-~the--commits/tjenamors-se-swap-2d6b9e?logo=sourcehut)](https://git.sr.ht/~the-commits/tjenamors-se-swap)
-[![GitHub mirror](https://img.shields.io/badge/GitHub-the--commits/tjenamors-se-swap-181717?logo=github)](https://github.com/the-commits/tjenamors-se-swap)
+[![sourcehut](https://img.shields.io/badge/sourcehut-~the--commits/tjenamors--se--swap-2d6b9e?logo=sourcehut)](https://git.sr.ht/~the-commits/tjenamors-se-swap)
+[![GitHub mirror](https://img.shields.io/badge/GitHub-the--commits/tjenamors--se--swap-181717?logo=github)](https://github.com/the-commits/tjenamors-se-swap)
 
 # Swap
 
