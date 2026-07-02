@@ -1,6 +1,12 @@
 [![sourcehut](https://img.shields.io/badge/sourcehut-~the--commits/tjenamors--se--swap-2d6b9e?logo=sourcehut)](https://git.sr.ht/~the-commits/tjenamors-se-swap)
 [![GitHub mirror](https://img.shields.io/badge/GitHub-the--commits/tjenamors--se--swap-181717?logo=github)](https://github.com/the-commits/tjenamors-se-swap)
 
+> **Do not open issues or pull requests on GitHub** — the mirror there is
+> [read-only](https://git.sr.ht/~the-commits/tjenamors-se-swap).
+> Please use the [sourcehut issue tracker](https://todo.sr.ht/~the-commits/tjenamors-se-swap)
+> and send patches to [~the-commits/tjenamors-se-swap@lists.sr.ht](mailto:~the-commits/tjenamors-se-swap@lists.sr.ht).
+
+
 # Swap
 
 Manage swap file with distro-specific best-practice sizing.
